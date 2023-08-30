@@ -1,4 +1,3 @@
-
 /* DECLARAR VARIABLES */
 let monedaOrigen = document.getElementById("monedaOrigen");
 let monedaSeleccionada = document.getElementById("monedaSeleccionada");
@@ -8,6 +7,7 @@ const urlApi = 'https://mindicador.cl/api/';
 let resultado;
 let chartDOM = "";
 let grafico = "";
+
 /* FUNCIONES */
 
 // FUNCION ASINCRONA PARA SOLICITAR UN REQUEST A LA API de MONEDAS
@@ -26,18 +26,14 @@ async function getMonedasAPI(monedaSeleted = "") {
 async function llenarInputMonedas(dataJson) {
   let template = `<option value="" >Seleccione indicador</option>`;
   Object.keys(dataJson).forEach(item => {
-    /*console.log(item);
-    console.log(dataJson[item]);*/
-    //Valido si el objeto contiene el campo codigo
     if (dataJson[item].codigo) {
-      //Se arma HTML para llenar el input
       template += `<option value=${dataJson[item].codigo} >${dataJson[item].nombre}</option>`;
     }
   });
   monedaSeleccionada.innerHTML = template;
 }
 
-// FUNCION PARA CONVERTIR LOS PESOS EN LA MONEDA SELECCIONADA
+// FUNCION PARA CONVERTIR LOS PESOS EN LA MONEDA SELECCIONADA/ CONDICIONANTES
 function convertirMonedas(monedasJSON) {
   monedaSeleccionada = document.getElementById("monedaSeleccionada");
   monedaOrigen = document.getElementById("monedaOrigen");
@@ -58,12 +54,8 @@ function convertirMonedas(monedasJSON) {
   }
 }
 
-
-
-///LLAMADA A LA API PAR OBTENER DATA DEL GRAFICO Y DESPLIEGUE DE GRAFICO
+//LLAMADA A LA API PAR OBTENER DATA DEL GRAFICO Y DESPLIEGUE DE GRAFICO
 async function obtenerDatosGrafico() {
-
-
   monedaSeleccionada = document.getElementById("monedaSeleccionada");
   let monedas = await getMonedasAPI(monedaSeleccionada.value);
   const titulo = monedas.nombre;
@@ -74,24 +66,17 @@ async function obtenerDatosGrafico() {
   
   // OBTIENES LAS FECHAS EN BASE AL JSON OBTENIDO
   const fechaValores = monedas.map((moneda) => {
-    //console.log(moneda.fecha.split("T")[0])
-    return moneda.fecha.split("T")[0]; //falta dar un mejor formato
-    //return formatearFecha(moneda.fecha) //PENDIENTE METODO
-    //return moneda.fecha;
+    return moneda.fecha.split("T")[0]; 
   });
 
-  // En la creación de la variable valores es necesario cambiar las comas(“,”) por puntos (“.”) para
-  // poder ocupar el Number() y parsear el valor que originalmente viene en String.
   // OBTIENES LOS VALORES EN BASE AL JSON OBTENIDO
   const valores = monedas.map((moneda) => {
-    //const valor = moneda.valor.replace(",", ".");
-    //console.log(moneda.valor);
     return Number(moneda.valor);
   });
   console.log("Valores parseados del Objeto Original de Api: ", valores);
   console.log("Valores parseados del Objeto Original de Api: ", fechaValores);
 
-  /// SE SETEA LOS ELEMENTOS BASICOS PARA LA CONFIGURACION
+  //ELEMENTOS BASICOS PARA LA CONFIGURACION
     const labels = fechaValores;
   const datasets = [
     {
@@ -100,19 +85,17 @@ async function obtenerDatosGrafico() {
       data: valores
     }];
   return { labels, datasets };
-
 }
 
-//
+//DATOS Y LO BASICO PARA LA CONFIGURACION DEL GRAFICO
 async function renderGrafico() {
-  //SE OBTIENEN LOS DATOS Y LO BASICO PARA LA CONFIGURACION DEL GRAFICO
   const data = await obtenerDatosGrafico();
   const config = {
     type: "line",
     data
   };
 
-  //SE VALISDA SI YA FUE RENDERIZADO, EN CASO AFIRMACION SE BORRA
+  //SE VALIDA SI YA FUE RENDERIZADO, EN CASO AFIRMACION SE BORRA
   if (grafico) {
     grafico.destroy();
   }
@@ -123,9 +106,9 @@ async function renderGrafico() {
   grafico = new Chart(chartDOM, config);
 }
 
-// funcion para renderizar los tipos de monedas en el input de seleccion
+// FUNCION PARA RENDERIZAR LOS TIPOS DE MONEDAS EN EL INPUT DE LA SELECCION
 async function renderInputMonedas() {
-  monedasJSON = await getMonedasAPI();  // llama a funcion getMonedas devuelve monedas
+  monedasJSON = await getMonedasAPI(); 
   llenarInputMonedas(monedasJSON);
   botonConvertir.addEventListener("click", () => {
     convertirMonedas(monedasJSON);
@@ -133,8 +116,6 @@ async function renderInputMonedas() {
   }
   );
 }
-
-
 
 /* LLAMADA A METODOS */
 renderInputMonedas()

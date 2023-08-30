@@ -1,2 +1,2 @@
-Conversor de monedas con grafico.
-JavaScript, Api.
+CONVERSOR DE MONEDAS CON GRAFICO
+APLICANDO JAVASCRIPT, API, BOOTSTRAP
